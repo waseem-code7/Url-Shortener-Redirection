@@ -1,5 +1,5 @@
 import {DynamoDBClient} from "@aws-sdk/client-dynamodb";
-import {DynamoDBDocumentClient, QueryCommand} from "@aws-sdk/lib-dynamodb";
+import {DynamoDBDocumentClient, GetCommand} from "@aws-sdk/lib-dynamodb";
 import {NodeHttpHandler} from "@smithy/node-http-handler";
 import https from "https";
 const utils = require("../common/utils");
@@ -14,7 +14,7 @@ class DynamoDbClient {
     public docClient;
 
 
-    constructor(private maxSockets: number,
+    private constructor(private maxSockets: number,
                 private keepAlive: boolean,
                 private keepAliveMsecs: number) {
 
@@ -52,21 +52,16 @@ class DynamoDbClient {
         return this.instance;
     }
 
-    public async getItemByPartitionKey(tableName: string, partitionKey: string,  partitionValue: string): Promise<Record<string, any>[] | null> {
-        const command: QueryCommand = new QueryCommand({
+    public async getItemByPartitionKey(tableName: string, partitionKey: string,  partitionValue: string): Promise<Record<string, any> | null> {
+        const command = new GetCommand({
             TableName: tableName,
-            KeyConditionExpression: "#pk = :pkval",
-            ExpressionAttributeNames: {
-                "#pk": partitionKey
-            },
-            ExpressionAttributeValues: {
-                ":pkval": partitionValue
-            },
-            ConsistentRead: true,
-        })
+            Key: {
+                [partitionKey]: partitionValue,
+            }
+        });
         const response = await this.docClient.send(command);
-        if (response && response["$metadata"].httpStatusCode === 200 && response["Items"]) {
-            return response["Items"]
+        if (response && response["$metadata"].httpStatusCode === 200 && response["Item"]) {
+            return response["Item"]
         }
         return null;
     }
