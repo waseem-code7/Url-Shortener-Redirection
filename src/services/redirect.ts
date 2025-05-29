@@ -6,12 +6,12 @@ const logger = utils.getLogger();
 const loadUrlDocument = async (req: Request, res: Response, next: NextFunction) => {
     const shortUrlId = req.params.shortUrlId;
     const dbInstance = DynamoDbClient.getInstance()
-    const item = await dbInstance.getItemByPartitionKey("Urls", "short_url_id", shortUrlId);
-    if (item === null || item.length === 0) {
+    const item = await dbInstance.getItemByPartitionKey(process.env.URL_DATA || "", "short_url_id", shortUrlId);
+    if (item === null) {
         logger.error("Document not found for shortUrlId", shortUrlId);
         return res.status(404).json({ error: "Not Found" });
     }
-    res.locals["item"] = item[0];
+    res.locals["item"] = item;
     next();
 }
 

@@ -9,6 +9,18 @@ function getLogger() {
     });
 }
 
+function getErrorMessage(err: unknown): string {
+    if (err instanceof Error) {
+        return err.message;
+    }
+    try {
+        return JSON.stringify(err);
+    } catch {
+        return String(err);
+    }
+}
+
 module.exports = {
-    getLogger: getLogger
+    getLogger: getLogger,
+    getErrorMessage: getErrorMessage
 }
