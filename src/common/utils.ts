@@ -1,3 +1,4 @@
+// commonJS
 import winston from 'winston';
 
 function getLogger() {
