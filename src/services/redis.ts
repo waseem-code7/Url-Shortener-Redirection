@@ -5,7 +5,7 @@ const logger = utils.getLogger();
 
 class RedisService {
     private static instance: RedisService;
-    private nodeIps: string[]
+    private readonly nodeIps: string[]
     private cluster!: RedisClusterType;
 
     private constructor() {
@@ -43,22 +43,30 @@ class RedisService {
         }
     }
 
-    public async hset(key: string, field: string, value: any): Promise<any> {
+    public async hset(key: string, field: string, value: any, ttl?: number): Promise<any> {
         try {
-            return await this.cluster?.HSET(key, field, value);
+            const res = await this.cluster?.HSET(key, field, value);
+            if(ttl) {
+              await this.cluster?.expire(key, ttl);
+            }
+            return res
         }
         catch (err) {
             logger.error(`HSET ${key} error: ${utils.getErrorMessage(err)}`);
         }
     }
 
-    public async hDel(key: string, field: string): Promise<any> {
+    public async del(key: string): Promise<any> {
         try {
-            return await this.cluster?.hDel(key, field);
+            return await this.cluster?.del(key);
         }
         catch (err) {
             logger.error(`HDel ${key} error: ${utils.getErrorMessage(err)}`);
         }
+    }
+
+    public async close(): Promise<void> {
+        await this.cluster?.close();
     }
 }
 

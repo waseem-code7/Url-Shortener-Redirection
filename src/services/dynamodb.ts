@@ -65,6 +65,10 @@ class DynamoDbClient {
         }
         return null;
     }
+
+    public async close() {
+        return Promise.resolve(this.dynamodbClient.destroy())
+    }
 }
 
 export default DynamoDbClient;
