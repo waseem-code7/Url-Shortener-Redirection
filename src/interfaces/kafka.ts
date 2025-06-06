@@ -30,6 +30,4 @@ export interface KafkaMessage {
     short_url_id: string;
 }
 
-export interface UpdateKafkaMessage extends KafkaMessage {
-    long_url: string;
-}
+export type UpdateKafkaMessage = KafkaMessage & { long_url: string };

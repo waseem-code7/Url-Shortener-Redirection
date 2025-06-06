@@ -7,7 +7,7 @@ const consumers: RegisterKafkaConsumer = {
         topic: "url_shortener",
         callback: handler,
         options: {
-            fromBeginning: true,
+            fromBeginning: false,
             autoCommit: false,
             partitionsConsumedConcurrently: 2
         }
