@@ -2,8 +2,8 @@ import {UpdateKafkaMessage, KafkaMessage} from "../../interfaces/kafka";
 import {Consumer, EachMessagePayload} from "kafkajs";
 import { strictJSONParse } from "../../common/generics";
 import {updateInCache, deleteInCache} from "../cache/cache"
-const utils = require("../common/utils");
-const logger = utils.getLogger("");
+const utils = require("../../common/utils");
+const logger = utils.getLogger();
 
 const updateUrlInCache = async function(value: string) {
     const message = strictJSONParse<UpdateKafkaMessage>(value);
